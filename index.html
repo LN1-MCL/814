@@ -18,23 +18,24 @@ body {
     position:fixed;
     width:100%;
     height:100%;
-    z-index:-3;  /* 图片放最底层 */
+    z-index:-3;  
+    overflow:hidden; 
 }
 
-.slide {
+.slide-img {
     position:absolute;
     width:100%;
     height:100%;
-    background-size:cover;
-    background-position:center;
+    object-fit: cover;       
+    object-position: center; 
     opacity:0;
     animation:fade 4s infinite;
 }
 
-.slide:nth-child(1){ background-image:url("https://i.postimg.cc/L4V5X1pw/IMG_8894.jpg"); animation-delay:0s; }
-.slide:nth-child(2){ background-image:url("https://i.postimg.cc/L4V5X1pc/IMG_9082.png"); animation-delay:1s; }
-.slide:nth-child(3){ background-image:url("https://i.postimg.cc/sfKWL8vn/IMG_8896.jpg"); animation-delay:2s; }
-.slide:nth-child(4){ background-image:url("https://i.postimg.cc/KcQTWVRQ/IMG_8895.jpg"); animation-delay:3s; }
+.slide-img:nth-child(1){ animation-delay:0s; }
+.slide-img:nth-child(2){ animation-delay:1s; }
+.slide-img:nth-child(3){ animation-delay:2s; }
+.slide-img:nth-child(4){ animation-delay:3s; }
 
 @keyframes fade { 0%{opacity:0;}12.5%{opacity:1;}37.5%{opacity:1;}50%{opacity:0;}100%{opacity:0;} }
 
@@ -43,14 +44,14 @@ body {
     width:100%;
     height:100%;
     background:linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.2));
-    z-index:-2;  /* 在图片上方一点 */
+    z-index:-2;
 }
 
 canvas {
     position:fixed;
     top:0;
     left:0;
-    z-index:-1;   /* 烟花在图片和overlay上方可见 */
+    z-index:-1;
     pointer-events:none;
 }
 
@@ -59,7 +60,7 @@ canvas {
     bottom:60px;
     width:100%;
     text-align:center;
-    z-index:0; /* 保证文字在烟花上方 */
+    z-index:0; 
 }
 
 h1 {
@@ -79,14 +80,30 @@ h2 {
     margin-top:10px;
     text-shadow:0 0 10px #ff9c00;
 }
+
+/* 音乐按钮样式 */
+#music-btn {
+    position:fixed;
+    top:20px;
+    right:20px;
+    padding:10px 15px;
+    border:none;
+    border-radius:20px;
+    background:#ff7f00;
+    color:white;
+    cursor:pointer;
+    z-index:10;
+    font-size:1rem;
+}
 </style>
 </head>
 <body>
+
 <div class="slideshow">
-  <div class="slide"></div>
-  <div class="slide"></div>
-  <div class="slide"></div>
-  <div class="slide"></div>
+  <img src="https://i.postimg.cc/L4V5X1pw/IMG_8894.jpg" class="slide-img">
+  <img src="https://i.postimg.cc/sfKWL8vn/IMG_8896.jpg" class="slide-img">
+  <img src="https://i.postimg.cc/KcQTWVRQ/IMG_8895.jpg" class="slide-img">
+  <img src="https://i.postimg.cc/jSHHchJC/IMG-9216.jpg" class="slide-img">
 </div>
 
 <div class="overlay"></div>
@@ -98,7 +115,17 @@ h2 {
   <h2>Papaya Victory 🧡</h2>
 </div>
 
+<!-- 背景音乐 -->
+<audio id="bgm" loop>
+  <source src="https://raw.githubusercontent.com/LN1-MCL/-/refs/heads/main/Taylor%20Swift%20-%20love%20story.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+
+<!-- 音乐开关按钮 -->
+<button id="music-btn">🎵 播放音乐</button>
+
 <script>
+// 烟花效果
 const canvas = document.getElementById("fireworks");
 const ctx = canvas.getContext("2d");
 
@@ -106,7 +133,6 @@ function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 }
-
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
@@ -141,6 +167,25 @@ function update(){
 
 setInterval(createFirework,1500);
 update();
+
+// 音乐按钮逻辑
+const musicBtn = document.getElementById("music-btn");
+const bgm = document.getElementById("bgm");
+
+let isPlaying = false;
+
+musicBtn.addEventListener('click', () => {
+    if(!isPlaying){
+        bgm.play();
+        musicBtn.textContent = '🔊 暂停音乐';
+        isPlaying = true;
+    } else {
+        bgm.pause();
+        musicBtn.textContent = '🎵 播放音乐';
+        isPlaying = false;
+    }
+});
 </script>
+
 </body>
 </html>
