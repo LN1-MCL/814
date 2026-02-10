@@ -15,7 +15,7 @@ body {
     color:white;
 }
 
-/* 幻灯片速度：1.5秒一张，4张共6秒 */
+/* 幻灯片：1.5秒/张 */
 .slideshow {
     position:fixed;
     width:100%;
@@ -71,27 +71,32 @@ canvas {
 }
 
 h1 {
-    color: white !important; /* 绝对保持白色 */
-    font-size: 2.8rem; /* 稍微微调大小确保不折行 */
-    white-space: nowrap; /* 强制单行 */
+    color: white !important;
+    font-size: 2.8rem;
+    white-space: nowrap; 
     letter-spacing: 2px;
-    text-shadow: 0 0 15px #ff7f00, 0 0 30px #ff7f00; /* 恢复你喜欢的橙色渲染 */
+    /* 双层阴影确保手机渲染深度 */
+    text-shadow: 0 0 15px #ff7f00, 0 0 30px #ff7f00;
+    -webkit-text-shadow: 0 0 15px #ff7f00;
     animation: glow 2s infinite alternate;
-}
-
-@keyframes glow {
-    from {text-shadow:0 0 10px #ff7f00;}
-    to {text-shadow:0 0 30px #ffae00;}
 }
 
 h2 {
     font-size:1.5rem;
     margin-top:10px;
-    color: white;
-    text-shadow:0 0 10px #ff9c00;
+    color: white !important; /* 恢复白色字体 */
+    white-space: nowrap;
+    /* 恢复 Papaya Victory 的橙色渲染效果 */
+    text-shadow: 0 0 10px #ff9c00, 0 0 20px #ff7f00;
+    -webkit-text-shadow: 0 0 10px #ff9c00;
 }
 
-/* 音乐按钮：解决 iOS 变色问题 */
+@keyframes glow {
+    from {text-shadow: 0 0 10px #ff7f00, 0 0 20px #ff7f00;}
+    to {text-shadow: 0 0 30px #ffae00, 0 0 40px #ff7f00;}
+}
+
+/* 按钮：彻底解决手机变红问题 */
 #music-btn {
     position:fixed;
     top:20px;
@@ -99,14 +104,15 @@ h2 {
     padding:10px 15px;
     border:none;
     border-radius:20px;
-    background:#ff7f00;
-    color:white;
+    background:#ff7f00 !important;
+    color:white !important;
     cursor:pointer;
-    z-index:10;
+    z-index:100;
     font-size:1rem;
-    /* 核心修复：防止系统渲染红色 */
+    font-weight: bold;
     -webkit-appearance: none;
     appearance: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 </style>
 </head>
@@ -127,7 +133,7 @@ h2 {
   <h2>Papaya Victory 🧡</h2>
 </div>
 
-<audio id="bgm" loop>
+<audio id="bgm" loop preload="auto">
   <source src="https://raw.githubusercontent.com/LN1-MCL/-/refs/heads/main/Taylor%20Swift%20-%20love%20story.mp3" type="audio/mpeg">
 </audio>
 
