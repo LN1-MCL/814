@@ -2,86 +2,98 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="color-scheme" content="dark">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Lando & Oscar</title>
 <style>
-/* 基础清零 */
 * { margin:0; padding:0; box-sizing:border-box; }
 
 body {
     height:100vh;
     overflow:hidden;
     font-family: Arial, sans-serif;
-    background: black;
-    color: white;
+    background:black;
+    color:white;
 }
 
-/* 幻灯片：1.5s/张，总计6s循环 */
-.slideshow { position:fixed; width:100%; height:100%; z-index:-3; overflow:hidden; }
+.slideshow {
+    position:fixed;
+    width:100%;
+    height:100%;
+    z-index:-3;  
+    overflow:hidden; 
+}
+
 .slide-img {
-    position:absolute; width:100%; height:100%; object-fit: cover;
-    opacity:0; animation:fade 6s infinite linear;
+    position:absolute;
+    width:100%;
+    height:100%;
+    object-fit: cover;       
+    object-position: center; 
+    opacity:0;
+    animation:fade 4s infinite;
 }
-.slide-img:nth-child(1){ animation-delay: 0s; }
-.slide-img:nth-child(2){ animation-delay: 1.5s; }
-.slide-img:nth-child(3){ animation-delay: 3s; }
-.slide-img:nth-child(4){ animation-delay: 4.5s; }
 
-@keyframes fade { 
-    0%, 15% { opacity:0; } 25%, 40% { opacity:1; } 50%, 65% { opacity:0; } 100% { opacity:0; } 
-}
+.slide-img:nth-child(1){ animation-delay:0s; }
+.slide-img:nth-child(2){ animation-delay:1s; }
+.slide-img:nth-child(3){ animation-delay:2s; }
+.slide-img:nth-child(4){ animation-delay:3s; }
+
+@keyframes fade { 0%{opacity:0;}12.5%{opacity:1;}37.5%{opacity:1;}50%{opacity:0;}100%{opacity:0;} }
 
 .overlay {
-    position:fixed; width:100%; height:100%;
-    background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.2));
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.2));
     z-index:-2;
 }
 
-canvas { position:fixed; top:0; left:0; z-index:-1; pointer-events:none; }
+canvas {
+    position:fixed;
+    top:0;
+    left:0;
+    z-index:-1;
+    pointer-events:none;
+}
 
 .content {
-    position:absolute; bottom:60px; width:100%; text-align:center; z-index:1; 
+    position:absolute;
+    bottom:60px;
+    width:100%;
+    text-align:center;
+    z-index:0; 
 }
 
 h1 {
-    font-size: 2.8rem;
-    color: white;
-    white-space: nowrap; 
-    letter-spacing: 2px;
-    /* 核心渲染：保持你满意的 iPad 质感 */
-    text-shadow: 0 0 15px #ff7f00, 0 0 30px #ff7f00;
-    animation: glow 2s infinite alternate;
-}
-
-h2 {
-    font-size: 1.5rem;
-    margin-top: 10px;
-    color: white;
-    white-space: nowrap;
-    text-shadow: 0 0 10px #ff9c00, 0 0 20px #ff7f00;
+    font-size:4rem;
+    letter-spacing:4px;
+    text-shadow:0 0 15px #ff7f00;
+    animation:glow 2s infinite alternate;
 }
 
 @keyframes glow {
-    from { text-shadow: 0 0 10px #ff7f00; }
-    to { text-shadow: 0 0 30px #ffae00; }
+    from {text-shadow:0 0 10px #ff7f00;}
+    to {text-shadow:0 0 30px #ffae00;}
 }
 
-/* 音乐按钮：防变色 + 防反转 */
+h2 {
+    font-size:1.5rem;
+    margin-top:10px;
+    text-shadow:0 0 10px #ff9c00;
+}
+
+/* 音乐按钮样式 */
 #music-btn {
-    position:fixed; top:20px; right:20px;
-    padding:10px 18px;
-    border: none;
-    border-radius: 20px;
-    /* 核心修复：强制橙色，不受深色模式影响 */
-    background: #ff7f00 !important;
-    color: white !important;
-    font-weight: bold;
-    cursor: pointer;
-    z-index: 100;
-    -webkit-appearance: none;
-    appearance: none;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    position:fixed;
+    top:20px;
+    right:20px;
+    padding:10px 15px;
+    border:none;
+    border-radius:20px;
+    background:#ff7f00;
+    color:white;
+    cursor:pointer;
+    z-index:10;
+    font-size:1rem;
 }
 </style>
 </head>
@@ -95,6 +107,7 @@ h2 {
 </div>
 
 <div class="overlay"></div>
+
 <canvas id="fireworks"></canvas>
 
 <div class="content">
@@ -102,45 +115,77 @@ h2 {
   <h2>Papaya Victory 🧡</h2>
 </div>
 
-<audio id="bgm" loop preload="auto">
+<!-- 背景音乐 -->
+<audio id="bgm" loop>
   <source src="https://raw.githubusercontent.com/LN1-MCL/-/refs/heads/main/Taylor%20Swift%20-%20love%20story.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
 </audio>
 
+<!-- 音乐开关按钮 -->
 <button id="music-btn">🎵 播放音乐</button>
 
 <script>
+// 烟花效果
 const canvas = document.getElementById("fireworks");
 const ctx = canvas.getContext("2d");
-function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-window.addEventListener('resize', resize);
-resize();
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
 
 let particles = [];
-function create() {
+
+function createFirework() {
     const x = Math.random() * canvas.width;
-    const y = Math.random() * canvas.height * 0.4;
-    for(let i=0;i<60;i++) particles.push({x,y,vx:(Math.random()-0.5)*6,vy:(Math.random()-0.5)*6,l:100});
+    const y = Math.random() * canvas.height * 0.5;
+    for(let i=0;i<80;i++){
+        particles.push({
+            x:x,
+            y:y,
+            speedX:(Math.random()-0.5)*6,
+            speedY:(Math.random()-0.5)*6,
+            life:100
+        });
+    }
 }
+
 function update(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     particles.forEach((p,i)=>{
-        p.x+=p.vx; p.y+=p.vy; p.l--;
-        ctx.fillStyle=`rgba(255,165,0,${p.l/100})`;
-        ctx.fillRect(p.x,p.y,2.5,2.5);
-        if(p.l<=0) particles.splice(i,1);
+        p.x+=p.speedX;
+        p.y+=p.speedY;
+        p.life--;
+        ctx.fillStyle="orange";
+        ctx.fillRect(p.x,p.y,2,2);
+        if(p.life<=0) particles.splice(i,1);
     });
     requestAnimationFrame(update);
 }
-setInterval(create,1500);
+
+setInterval(createFirework,1500);
 update();
 
-const btn = document.getElementById("music-btn");
+// 音乐按钮逻辑
+const musicBtn = document.getElementById("music-btn");
 const bgm = document.getElementById("bgm");
+
 let isPlaying = false;
-btn.addEventListener('click', () => {
-    if(!isPlaying){ bgm.play(); btn.textContent = '🔊 暂停音乐'; isPlaying = true; }
-    else { bgm.pause(); btn.textContent = '🎵 播放音乐'; isPlaying = false; }
+
+musicBtn.addEventListener('click', () => {
+    if(!isPlaying){
+        bgm.play();
+        musicBtn.textContent = '🔊 暂停音乐';
+        isPlaying = true;
+    } else {
+        bgm.pause();
+        musicBtn.textContent = '🎵 播放音乐';
+        isPlaying = false;
+    }
 });
 </script>
+
 </body>
 </html>
